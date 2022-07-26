@@ -15,8 +15,6 @@ It also contains R and Python2/3 for basic computationas. And they can be called
   
 * You want a clean/stable/reproducible computing environment.
   
-* 
-* 
 
 ## *Full list of main software and version:*
 
