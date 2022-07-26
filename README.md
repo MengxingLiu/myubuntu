@@ -36,7 +36,7 @@ To build the container from Dockerfile, you should have docker engine installed 
 
     $ git clone  https://github.com/MengxingLiu/myubuntu.git
     $ cd myubuntu/
-    $ docker build -t myubuntu:1.0 .
+    $ docker build -t myubuntu:0.1 .
 This usually takes 2-3 hours, as building to from dockerfile basically equals compiling the softwares from fresh. 
 
 **Please be alert**, if you choose to build from Dockerfile, some dependences might be installed as the lastes version by your installation time (e.g. some libraries). But the neuroimaging tools will be in the exact same version as shown above.
