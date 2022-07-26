@@ -47,11 +47,11 @@ This usually takes 2-3 hours, as building to from dockerfile basically equals co
 
 If you choose to pull the container from docker hub instead of building from Dockerfile, you can have either **docker** or **singularity** installed on your machine (as some HPCs do not allow docker usage, singularity is a good alternative).
 
-Pulling with Docker:
+Pulling with **Docker**:
 
     $ docker pull lmengxing/myubuntu:0.1 
 
-Pulling with Singularity:
+Pulling with **Singularity**:
 
     $ singularity build myubuntu_0.1.sif docker://lmengxing/myubuntu:0.1
 
@@ -62,7 +62,7 @@ The idea of this container is to provide an neuroimaging enviroment that allows 
 
 Simplest example:
 
-Running with Docker:
+Running with **Docker**:
 
     $ docker run -it lmengxing/myubuntu:0.1 
 
@@ -70,9 +70,31 @@ or
 
     $ sudo docker run -it lmengxing/myubuntu:0.1  # depends on your user permission
 
-Running with Singularity:
+Running with **Singularity**:
 
-    $ singularity 
+    $ singularity shell myubuntu_0.1.sif 
+
+
+Formal usage example:
+
+Usually you would like to mount your data on the container, in order to access and process your data after you enter the docker container environment. In MyUbuntu, there is a directory "work" under the home directory /root, where you can mount your data on.
+
+Running with **Docker**:
+
+    $  docker run -it -v /home/username/project:/root/work lmengxing/myubuntu:0.1
+
+Runing with **Singularity**:
+
+    $ singularity shell --bind /home/username/project:/root/work myubuntu_0.1.sif
+
+With this command, after you enter the docker container, you will find your data under /root/work. You can also try to mount multiple directory on your host to multiple destinations in the docker container, even the directories don't exisit in the docker container before mounting.
+
+## *Contributing*
+
+Thank you for your interest in contributing to *MyUbuntu*! If you would like to have specific tools added in this container, feel free to open an issue. Or better, you can fork this repository and add the tools you like and do a pull request. 
+
+Enjoy.
+
 
 
 
