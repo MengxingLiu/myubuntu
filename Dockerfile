@@ -1,14 +1,23 @@
-# This Dockerfile constructs a docker image, based on the vistalab/freesurfer
-# docker image to execute recon-all as a Flywheel Gear.
+# This Dockerfile constructs an ubuntu docker image
+# with common neuroimaging tools set up
 #
 # Example build:
-#   docker build --no-cache --tag scitran/freesurfer-recon-all `pwd`
+#   docker build --no-cache --tag lmengxing/myubuntu:1.0 .
 #
 # Example usage:
-#   docker run -v /path/to/your/subject:/input scitran/freesurfer-recon-all
-#
-FROM ubuntu:bionic-20220427
+#   docker run -v /path/to/your/subject:/input /path/to/your/output:/output lmengxing/myubuntu:1.0
 
+# version: 1.0
+# Ubuntu version: 18.04
+
+# common tools included:
+# Freesurfer:   7.2.0
+# ANTs:         2.4.0 SHA:04a018d
+# AFNI:         AFNI_22.2.02 'Marcus Aurelius'
+# MRtrix3:      3.0.3
+# FSL:          6.0.2 
+
+FROM ubuntu:bionic-20220427
 
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -47,15 +56,9 @@ ENV FREESURFER_HOME /opt/freesurfer
 
 RUN wget -N -qO- "https://surfer.nmr.mgh.harvard.edu/fswiki/MatlabRuntime?action=AttachFile&do=get&target=runtime2014bLinux.tar.gz" | tar -xz -C $FREESURFER_HOME && chown -R root:root /opt/freesurfer/MCRv84 && chmod -R a+rx /opt/freesurfer/MCRv84
 
-# RUN apt-get install python-pip
-# Install neuropythy
-
 RUN pip3 install numpy nibabel scipy pandas 
 
-# download ANTs scripts
-
-#RUN wget https://github.com/ANTsX/ANTs/archive/04a018d.zip | unzip 04a018d.zip && chmod -R a+rx ANTs-04a018dc5308183b455194a9a5b14ffe1b0edf5f/Scripts
-#RUN 
+# Compile and configure ANTs
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                     apt-transport-https \
@@ -101,7 +104,6 @@ ENV LD_LIBRARY_PATH="/opt/ants/lib:$LD_LIBRARY_PATH"
 RUN cd /tmp/ants/build/ANTS-build \
     && cmake --build . --target test
 
-
 ENV ANTSPATH="/opt/ants/bin" \
     PATH="/opt/ants/bin:$PATH" \
     LD_LIBRARY_PATH="/opt/ants/lib:$LD_LIBRARY_PATH"
@@ -112,7 +114,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-## setup up AFNI 
+# Compile and configure AFNI 
 RUN ln -s /usr/lib/x86_64-linux-gnu/libgsl.so.23 /usr/lib/x86_64-linux-gnu/libgsl.so.19
 RUN curl -O https://afni.nimh.nih.gov/pub/dist/bin/misc/@update.afni.binaries
 RUN tcsh @update.afni.binaries -package linux_ubuntu_16_64 -do_extras
@@ -130,6 +132,7 @@ RUN apt install -y r-base
 RUN /bin/bash -c "rPkgsInstall -pkgs ALL"
 
 
+# Compile and configure mrtrix 3
 # Git commitish from which to build MRtrix3.
 ARG MRTRIX3_GIT_COMMITISH="master"
 # Command-line arguments for `./configure`
@@ -145,7 +148,26 @@ RUN git clone -b $MRTRIX3_GIT_COMMITISH --depth 1 https://github.com/MRtrix3/mrt
     && NUMBER_OF_PROCESSORS=$MAKE_JOBS ./build $MRTRIX3_BUILD_FLAGS \
     && rm -rf tmp
 WORKDIR /root/
-
+RUN cd /opt/mrtrix3/ && ./set_path
 # move AFNI to /opt/
 RUN mv /root/abin /opt/
-ENV PATH=/opt/abin:$PATH
+ENV PATH=/opt/abin:/opt/mrtrix3:$PATH
+
+# install FSL version 6.0.2
+RUN wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py -O fslinstaller.py \
+    && python fslinstaller.py -V 6.0.2 -d /opt/fsl -p
+
+ENV FSLDIR="/opt/fsl"
+ENV PATH="$FSLDIR/bin/:$PATH" \
+    FSLMULTIFILEQUIT=TRUE \
+    FSLGECUDAQ=cuda.q \
+    FSLTCLSH="$FSLDIR/bin/fsltclsh" \
+    FSLWISH="$FSLDIR/bin/fslwish" \
+    FSLOUTPUTTYPE=NIFTI_GZ
+RUN rm fslinstaller.py
+RUN apt install -y libxm4
+RUN mkdir /root/work
+ENTRYPOINT /bin/bash 
+
+
+
