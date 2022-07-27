@@ -25,7 +25,8 @@ It also contains R and Python2/3 for basic computationas. And they can be called
 * FSL:          6.0.2
 * Python:       2.7.17/3.6.9
 * R:            3.6.3
-
+* MATLAB Runtime: 2014b(8.4)
+  
 ## *Installation*
 
 There are two ways to install this container on your personal machine or high performance computer(HPC)
@@ -39,7 +40,7 @@ To build the container from Dockerfile, you should have docker engine installed 
     $ docker build -t myubuntu:0.1 .
 This usually takes 2-3 hours, as building to from dockerfile basically equals compiling the softwares from fresh. 
 
-**Please be alert**, if you choose to build from Dockerfile, some dependences might be installed as the lastes version by your installation time (e.g. some libraries). But the neuroimaging tools will be in the exact same version as shown above.
+**Please be alert**, if you choose to build from Dockerfile, some dependences might be installed as the lastest version by your installation time (e.g. some libraries). But the neuroimaging tools will be in the exact same version as shown above.
 
 ### B. Pull from docker hub
 
@@ -56,7 +57,7 @@ Pulling with **Singularity**:
 
 ## *Usage*
 
-The idea of this container is to provide an neuroimaging enviroment that allows users to run data analysis interactively with their own data and pipeline interactively.
+The idea of this container is to provide an neuroimaging enviroment that allows users to run data analysis with their own data and pipeline interactively.
 
 Simplest example:
 
@@ -85,7 +86,7 @@ Runing with **Singularity**:
 
     $ singularity shell --bind /home/username/project:/root/work myubuntu_0.1.sif
 
-With this command, after you enter the docker container, you will find your data under /root/work. You can also try to mount multiple directory on your host to multiple destinations in the docker container, even the directories don't exisit in the docker container before mounting.
+With this command, after you enter the docker container, you will find your data under /root/work. You can also try to mount multiple directories on your host to multiple destinations in the docker container, even the directories do not exisit in the docker container before mounting.
 
 ## *Contributing*
 

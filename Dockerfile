@@ -167,6 +167,9 @@ ENV PATH="$FSLDIR/bin/:$PATH" \
 RUN rm fslinstaller.py
 RUN apt install -y libxm4
 RUN mkdir /root/work
+
+RUN cat /opt/freesurfer/SetUpFreeSurfer.sh >> ~/.bashrc
+
 ENTRYPOINT /bin/bash 
 
 
