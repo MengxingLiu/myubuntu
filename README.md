@@ -92,14 +92,16 @@ With this command, after you enter the docker container, you will find your data
 ## *Using GUI with myubuntu*
 
 Linux:
+
 simple way is to forward x11 to your local machine so that the container can render to the correct display by reading and writing through the X11 unix socket.
+
 First adjust the permission X server host with 
 
     $ xhost +local:root # this adds the container username to your x server access list
 
 This is not safe as someone could display something on your screen (although not likely).
 
-After adding access, you can run myubuntu only with a few parameters:
+After adding access, you can run myubuntu with a few more parameters:
 
     sudo docker run --rm -ti \
         --user=0 \
