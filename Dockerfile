@@ -1,6 +1,9 @@
 # This Dockerfile constructs an ubuntu docker image
 # with common neuroimaging tools set up
 #
+# Author: Liu Mengxing 刘梦醒
+# Contact: mengxing1944@gmail.com
+#
 # Example build:
 #   docker build --no-cache --tag lmengxing/myubuntu:1.0 .
 #
@@ -29,31 +32,30 @@ RUN apt-get update && apt-get -y install \
         wget \
         gawk \
         tcsh \
-        python \
         libgomp1 \
         python2.7 \
         python3 \
-        perl-modules
+        perl-modules \
+        libxm4
 
-# Download Freesurfer dev from MGH and untar to /opt
+# Download Freesurfer 7.2 from MGH and untar to /opt
 RUN wget -N -qO- ftp://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.2.0/freesurfer-linux-ubuntu18_amd64-7.2.0.tar.gz | tar -xz -C /opt && chown -R root:root /opt/freesurfer && chmod -R a+rx /opt/freesurfer
 
 RUN apt-get update --fix-missing \
- && apt-get install -y wget bzip2 ca-certificates \
+ && apt-get install -y bzip2 ca-certificates \
       libglib2.0-0 libxext6 libsm6 libxrender1 \
-      git mercurial subversion curl grep sed dpkg gcc g++ libeigen3-dev zlib1g-dev libgl1-mesa-dev libfftw3-dev libtiff5-dev
-RUN apt-get install -y libxt6 libxcomposite1 libfontconfig1 libasound2
-RUN apt-get update && apt-get install -y --force-yes \
-    xvfb xfonts-100dpi xfonts-75dpi xfonts-cyrillic \
-    zip unzip python imagemagick wget subversion \
-    jq vim python3-pip 
-    
+      git mercurial subversion curl grep sed dpkg \
+      libxt6 libxcomposite1 libfontconfig1 libasound2 \
+      gcc g++ libeigen3-dev zlib1g-dev libgl1-mesa-dev libfftw3-dev libtiff5-dev \
+      xvfb xfonts-100dpi xfonts-75dpi xfonts-cyrillic \
+      unzip imagemagick jq vim python3-pip libxt-dev libxmu-dev 
+
+RUN cat /opt/freesurfer/SetUpFreeSurfer.sh >> ~/.bashrc
 
 ############################
 # The brainstem and hippocampal subfield modules in FreeSurfer-dev require the Matlab R2014b runtime
-RUN apt-get install -y libxt-dev libxmu-dev
-ENV FREESURFER_HOME /opt/freesurfer
 
+ENV FREESURFER_HOME /opt/freesurfer
 RUN wget -N -qO- "https://surfer.nmr.mgh.harvard.edu/fswiki/MatlabRuntime?action=AttachFile&do=get&target=runtime2014bLinux.tar.gz" | tar -xz -C $FREESURFER_HOME && chown -R root:root /opt/freesurfer/MCRv84 && chmod -R a+rx /opt/freesurfer/MCRv84
 
 RUN pip3 install numpy nibabel scipy pandas 
@@ -62,14 +64,11 @@ RUN pip3 install numpy nibabel scipy pandas
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
                     apt-transport-https \
-                    bc \
                     build-essential \
                     ca-certificates \
                     gnupg \
                     ninja-build \
-                    git \
                     software-properties-common \
-                    wget \
                     zlib1g-dev libssl1.1
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null \
     | apt-key add - \
@@ -78,8 +77,6 @@ RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/nul
   && apt-get -y install cmake=3.18.3-0kitware1 cmake-data=3.18.3-0kitware1
 RUN wget -N -q "https://github.com/ANTsX/ANTs/archive/04a018d.zip"
 RUN unzip 04a018d.zip && chmod -R a+rx ANTs-04a018dc5308183b455194a9a5b14ffe1b0edf5f/
-RUN echo
-RUN ls ANTs*
 
 RUN mkdir -p /tmp/ants/source/ && cp -r ANTs-04a018dc5308183b455194a9a5b14ffe1b0edf5f/* /tmp/ants/source/
 RUN ls /tmp/ants/source/*
@@ -109,7 +106,6 @@ ENV ANTSPATH="/opt/ants/bin" \
     LD_LIBRARY_PATH="/opt/ants/lib:$LD_LIBRARY_PATH"
 RUN apt-get update \
     && apt install -y --no-install-recommends \
-                   bc \
                    zlib1g-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -164,11 +160,7 @@ ENV PATH="$FSLDIR/bin/:$PATH" \
     FSLTCLSH="$FSLDIR/bin/fsltclsh" \
     FSLWISH="$FSLDIR/bin/fslwish" \
     FSLOUTPUTTYPE=NIFTI_GZ
-RUN rm fslinstaller.py
-RUN apt install -y libxm4
-RUN mkdir /root/work
-
-RUN cat /opt/freesurfer/SetUpFreeSurfer.sh >> ~/.bashrc
+RUN rm fslinstaller.py && mkdir /root/work
 
 ENTRYPOINT /bin/bash 
 

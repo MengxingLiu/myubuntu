@@ -88,6 +88,37 @@ Runing with **Singularity**:
 
 With this command, after you enter the docker container, you will find your data under /root/work. You can also try to mount multiple directories on your host to multiple destinations in the docker container, even the directories do not exisit in the docker container before mounting.
 
+
+## *Using GUI with myubuntu*
+
+Linux:
+simple way is to forward x11 to your local machine so that the container can render to the correct display by reading and writing through the X11 unix socket.
+First adjust the permission X server host with 
+
+    $ xhost +local:root # this adds the container username to your x server access list
+
+This is not safe as someone could display something on your screen (although not likely).
+
+After adding access, you can run myubuntu only with a few parameters:
+
+    sudo docker run --rm -ti \
+        --user=0 \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -e DISPLAY=${DISPLAY} \
+        lmengxing/myubuntu:0.1 /bin/bash
+
+Once you finish your work, and if you are concerned about the X server host security, you can remove "root" from your access list by:
+
+    xhost -local:root
+
+MacOs:
+
+    Coming...
+
+Windows:
+
+    Coming...
+
 ## *Contributing*
 
 Thank you for your interest in contributing to *MyUbuntu*! If you would like to have specific tools added in this container, feel free to open an issue. Or better, you can fork this repository and add the tools you like and do a pull request. 
