@@ -119,7 +119,7 @@ MacOs:
 
 Windows:
 
-    Use VsXsrv. This method is not stable, fsleyes in my computer will report an error
+    Use VsXsrv. This method is not stable, fsleyes in my computer will report an error (added and tested by @Ernest861)
 
 1. Install VcXsrv Windows X Server (path a or b is same)，
 
