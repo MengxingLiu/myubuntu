@@ -162,6 +162,8 @@ ENV PATH="$FSLDIR/bin/:$PATH" \
     FSLOUTPUTTYPE=NIFTI_GZ
 RUN rm fslinstaller.py && mkdir /root/work
 
+RUN apt install libglw1-mesa
+
 ENTRYPOINT /bin/bash 
 
 
