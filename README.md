@@ -119,7 +119,39 @@ MacOs:
 
 Windows:
 
-    Coming...
+    Use VsXsrv. This method is not stable, fsleyes in my computer will report an error
+
+1. Install VcXsrv Windows X Server (path a or b is same)，
+
+    a. download exe and install（[https://sourceforge.net/projects/vcxsrv/]);
+    b. **OR** use Chocolatery to install ([https://chocolatey.org/install]).
+
+```PowerShell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+choco install vcxsrv
+```
+
+2. Set Xlauch
+    2.1 run Xlaunch from the start menu;
+    2.2 Display settings: Multiple windows and Display number -1;
+    2.3 Client startup: Start no client;
+    2.4 Extra settings: √Clipboard-Primary Selection, Native opngl, disable access control;
+    2.5 if Firewall alarm just allows.
+
+3. Open Docker
+    3.1 get local host ip; 3.2 run docker; 3.3 export the freesurfer license;3.4 set DISPLAY value;3.5 open freesurfer.
+
+```PowerShell
+ipconfig
+docker run -it -v YOURWORKPATH:/root/work lmengxing/myubuntu:0.1
+```
+```Bash
+export FS_LICENSE='/root/work/license.txt'
+export DISPLAY='YOURIP:0.0'
+freeview
+```
+This method is not stable in my win10 and seems to be related to the amd graph set (libGL error: No matching fbConfigs or visuals found
+libGL error: failed to load driver: swrast).
 
 ## *Contributing*
 
