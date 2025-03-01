@@ -22,7 +22,7 @@ It also contains R and Python2/3 for basic computationas. And they can be called
 * ANTs:         2.4.0 SHA:04a018d
 * AFNI:         AFNI_22.2.02 'Marcus * Aurelius'
 * MRtrix3:      3.0.3
-* FSL:          6.0.2
+* FSL:          6.0.6
 * Python:       2.7.17/3.6.9
 * R:            3.6.3
 * MATLAB Runtime: 2014b(8.4)
@@ -81,6 +81,7 @@ Usually you would like to mount your data on the container, in order to access a
 Running with **Docker**:
 
     $  docker run -it -v /home/username/project:/root/work lmengxing/myubuntu:0.1
+    $  docker run lmengxing/myubuntu:0.2 3dinfo
 
 Runing with **Singularity**:
 

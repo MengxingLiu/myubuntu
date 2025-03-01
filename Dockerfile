@@ -2,15 +2,24 @@
 # with common neuroimaging tools set up
 #
 # Author: Liu Mengxing 刘梦醒
-# Contact: mengxing1944@gmail.com
+# Contact: mengxing1844@gmail.com
 #
 # Example build:
-#   docker build --no-cache --tag lmengxing/myubuntu:1.0 .
+#   docker build --no-cache --tag lmengxing/myubuntu:0.2 .
 #
 # Example usage:
-#   docker run -v /path/to/your/subject:/input /path/to/your/output:/output lmengxing/myubuntu:1.0
+#   docker run -v /path/to/your/subject:/input /path/to/your/output:/output lmengxing/myubuntu:0.2
+#   docker run lmengxing/myubuntu:0.2 3dinfo
 
-# version: 1.0
+
+
+# version log
+
+# version: 0.2
+# support calling command through host command line
+
+
+# version: 0.1
 # Ubuntu version: 18.04
 
 # common tools included:
@@ -18,7 +27,12 @@
 # ANTs:         2.4.0 SHA:04a018d
 # AFNI:         AFNI_22.2.02 'Marcus Aurelius'
 # MRtrix3:      3.0.3
-# FSL:          6.0.2 
+# FSL:          6.0.6 
+
+
+
+
+
 
 FROM ubuntu:bionic-20220427
 
@@ -151,20 +165,20 @@ ENV PATH=/opt/abin:/opt/mrtrix3:$PATH
 
 # install FSL version 6.0.2
 RUN wget https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py -O fslinstaller.py \
-    && python fslinstaller.py -V 6.0.2 -d /opt/fsl -p
-
+    && python fslinstaller.py -V 6.0.6 -d /opt/fsl 
+ARG CACHEBUST=1 
 ENV FSLDIR="/opt/fsl"
-ENV PATH="$FSLDIR/bin/:$PATH" \
+ENV PATH="$FSLDIR/bin:$PATH" \
     FSLMULTIFILEQUIT=TRUE \
     FSLGECUDAQ=cuda.q \
     FSLTCLSH="$FSLDIR/bin/fsltclsh" \
     FSLWISH="$FSLDIR/bin/fslwish" \
-    FSLOUTPUTTYPE=NIFTI_GZ
+    FSLOUTPUTTYPE=testNIFTI_GZ \
+    PATH="$PATH:/opt/freesurfer/bin"
 RUN rm fslinstaller.py && mkdir /root/work
-
 RUN apt install libglw1-mesa
+RUN chmod -R 777 /root
+ENV PATH="$PATH:/opt/freesurfer/bin:/opt/mrtrix3/bin"
 
-ENTRYPOINT /bin/bash 
-
-
+#ENTRYPOINT /bin/bash 
 
